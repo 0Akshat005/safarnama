@@ -48,9 +48,12 @@ export default function App() {
   // Initialize Lenis Smooth Scroll & Video Scrubbing Engine
   useEffect(() => {
     const video = videoRef.current;
+    if (video) {
+      video.play().catch(() => {});
+    }
 
     const handleScrollProgress = (progress: number) => {
-      if (video && video.duration) {
+      if (video && video.duration && !isNaN(video.duration)) {
         const targetTime = progress * video.duration;
         if (Math.abs(video.currentTime - targetTime) > 0.08) {
           video.currentTime = targetTime;
