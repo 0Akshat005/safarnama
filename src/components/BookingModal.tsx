@@ -46,10 +46,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ getaway, onClose, on
 
   return (
     <div 
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto overscroll-contain"
+      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto overscroll-contain"
       onWheel={(e) => e.stopPropagation()}
     >
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col overscroll-contain">
+      <div className="relative w-full sm:max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden sm:my-8 max-h-[95vh] sm:max-h-[90vh] flex flex-col overscroll-contain">
         
         {/* Header Image Bar */}
         <div className="relative h-48 sm:h-56 shrink-0">
@@ -218,8 +218,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ getaway, onClose, on
                   </div>
                 </div>
 
-                {/* Price Total Bar */}
-                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                {/* Price Total Bar — flex-wrap to prevent overflow on mobile */}
+                <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div>
                     <span className="text-xs text-slate-500 font-medium">Total Package Price</span>
                     <div className="text-2xl font-bold text-[#1e3e2b]">
@@ -229,7 +229,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ getaway, onClose, on
 
                   <button
                     type="submit"
-                    className="bg-[#1e3e2b] hover:bg-[#2d5a3f] text-white font-semibold px-7 py-3 rounded-full text-sm shadow-md transition-colors cursor-pointer"
+                    className="bg-[#1e3e2b] hover:bg-[#2d5a3f] text-white font-semibold px-7 py-3.5 min-h-[52px] rounded-full text-base shadow-md transition-colors cursor-pointer active:scale-95 w-full sm:w-auto"
                   >
                     Confirm Reservation
                   </button>

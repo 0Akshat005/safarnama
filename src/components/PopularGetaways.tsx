@@ -64,18 +64,19 @@ export const PopularGetaways: React.FC<PopularGetawaysProps> = ({ onSelectGetawa
           </p>
         </div>
 
-        {/* Getaways Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Unified Responsive Layout: Horizontal scroll on mobile (<sm), 4-col grid on desktop (sm+) */}
+        <div className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory scrollbar-none grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 -mx-2 px-2 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
           {GETAWAYS_DATA.map((getaway) => (
             <div
               key={getaway.id}
               onClick={() => onSelectGetaway(getaway)}
-              className="group relative rounded-2xl overflow-hidden h-[380px] sm:h-[400px] cursor-pointer border border-white/20 shadow-xl hover:shadow-emerald-950/40 transition-all duration-500 transform hover:-translate-y-1.5"
+              className="group relative rounded-2xl overflow-hidden h-[380px] sm:h-[400px] w-[280px] sm:w-auto shrink-0 sm:shrink snap-start cursor-pointer border border-white/20 shadow-xl hover:shadow-emerald-950/40 transition-all duration-500 transform hover:-translate-y-1.5"
             >
               {/* Background Cover Image */}
               <img
                 src={getaway.image}
                 alt={getaway.title}
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
               />

@@ -136,7 +136,7 @@ export const InMotionSection: React.FC<InMotionSectionProps> = ({ onSelectDestin
 
               <button
                 onClick={scrollToGetaways}
-                className="inline-flex items-center gap-2 bg.black/40 hover:bg-white/10 text-white text-sm font-semibold px-6 py-3 rounded-full border border-white/30 backdrop-blur-md transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 bg-black/40 hover:bg-white/10 text-white text-sm font-semibold px-6 py-3 rounded-full border border-white/30 backdrop-blur-md transition-all cursor-pointer"
               >
                 <div className="w-6 h-6 rounded-full border border-white/40 flex items-center justify-center">
                   <Play className="w-3 h-3 text-white fill-white translate-x-0.5" />
@@ -147,26 +147,28 @@ export const InMotionSection: React.FC<InMotionSectionProps> = ({ onSelectDestin
 
           </div>
 
-          {/* Middle Section: TRENDING DESTINATIONS 5 Cards Row */}
+          {/* Middle Section: TRENDING DESTINATIONS 5 Cards */}
           <div className="space-y-3 pt-4">
             <div className="text-xs font-bold uppercase tracking-widest text-emerald-400">
               TRENDING DESTINATIONS
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            {/* Unified Single Container: Horizontal scroll on mobile (<sm), 5-col grid on desktop (sm+) */}
+            <div className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory scrollbar-none grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 -mx-2 px-2 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
               {trendingDestinations.map((dest) => (
                 <div
                   key={dest.id}
                   onClick={() => handleCardClick(dest.id, dest.name)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCardClick(dest.name)}
-                  className="group relative rounded-2xl overflow-hidden h-[180px] sm:h-[190px] border border-white/15 bg-black/40 shadow-lg cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:border-emerald-400/40 z-20"
+                  onKeyDown={(e) => e.key === 'Enter' && handleCardClick(dest.id, dest.name)}
+                  className="group relative rounded-2xl overflow-hidden h-[180px] sm:h-[190px] w-[200px] sm:w-auto shrink-0 sm:shrink snap-start border border-white/15 bg-black/40 shadow-lg cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:border-emerald-400/40 z-20"
                 >
                   {/* Card Background Image */}
                   <img
                     src={dest.image}
                     alt={dest.name}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
                   />
 

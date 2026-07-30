@@ -31,10 +31,10 @@ export const TripPlannerModal: React.FC<TripPlannerModalProps> = ({ isOpen, onCl
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in overscroll-contain"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in overscroll-contain"
       onWheel={(e) => e.stopPropagation()}
     >
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col overscroll-contain">
+      <div className="relative w-full sm:max-w-xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden sm:my-8 max-h-[95vh] sm:max-h-[90vh] flex flex-col overscroll-contain">
         
         {/* Header */}
         <div className="bg-[#1e3e2b] p-6 text-white relative">
@@ -177,7 +177,7 @@ export const TripPlannerModal: React.FC<TripPlannerModalProps> = ({ isOpen, onCl
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-[#1e3e2b] hover:bg-[#2d5a3f] text-white font-semibold py-3 rounded-full text-sm shadow flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full bg-[#1e3e2b] hover:bg-[#2d5a3f] text-white font-semibold py-3.5 min-h-[52px] rounded-full text-base shadow flex items-center justify-center gap-2 transition-colors cursor-pointer active:scale-95"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
                   <span>Generate Free Custom Itinerary</span>

@@ -15,6 +15,22 @@ import { Getaway, Destination, BookingFormData } from './types';
 import { GETAWAYS_DATA, DESTINATIONS_DATA } from './data/mockData';
 
 const FRAME_COUNT = 300;
+const MOBILE_BREAKPOINT = 768;
+
+/** Detect mobile viewport — checked once on mount, updated on resize */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', onChange);
+    setIsMobile(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return isMobile;
+}
 
 const getFrameUrl = (index: number) => {
   const paddedIndex = String(index).padStart(4, '0');
@@ -22,6 +38,8 @@ const getFrameUrl = (index: number) => {
 };
 
 export default function App() {
+  const isMobile = useIsMobile();
+
   // State for webpage UI
   const [activeTab, setActiveTab] = useState('home');
   const [selectedGetaway, setSelectedGetaway] = useState<Getaway | null>(null);
@@ -29,7 +47,7 @@ export default function App() {
   const [plannerOpen, setPlannerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Canvas & Frame Animation Refs
+  // Canvas & Frame Animation Refs (desktop only)
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(FRAME_COUNT).fill(null));
   const targetFrameRef = useRef<number>(0);
@@ -40,18 +58,19 @@ export default function App() {
   const [loadedCount, setLoadedCount] = useState<number>(0);
   const [isInitialReady, setIsInitialReady] = useState<boolean>(false);
 
-  // 1. Initialize Lenis Smooth Scroll Engine
+  // 1. Initialize Lenis Smooth Scroll Engine (desktop only — mobile uses native touch scroll)
   useEffect(() => {
+    if (isMobile) return; // Native touch momentum is superior on mobile
+
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Smooth momentum easing
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       touchMultiplier: 2,
       infinite: false,
     });
 
     lenisRef.current = lenis;
 
-    // Connect Lenis scroll updates directly to target frame progress
     lenis.on('scroll', ({ scroll, limit }: { scroll: number; limit: number }) => {
       if (limit > 0) {
         const progress = Math.max(0, Math.min(1, scroll / limit));
@@ -59,7 +78,6 @@ export default function App() {
       }
     });
 
-    // Lenis RAF animation loop
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
@@ -71,7 +89,7 @@ export default function App() {
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, []);
+  }, [isMobile]);
 
   // Lock Lenis & body scroll when any modal is open so scrolling inside modal doesn't scroll background
   const isModalOpen = Boolean(selectedDestination || selectedGetaway || plannerOpen);
@@ -91,11 +109,17 @@ export default function App() {
     };
   }, [isModalOpen]);
 
-  // 2. Preload & Pre-decode PNG Frames into GPU VRAM
+  // 2. Preload & Pre-decode PNG Frames into GPU VRAM (desktop only)
   useEffect(() => {
+    if (isMobile) {
+      // On mobile: skip frame loading entirely, mark as ready immediately
+      setIsInitialReady(true);
+      setLoadedCount(FRAME_COUNT);
+      return;
+    }
+
     let isCancelled = false;
 
-    // Load initial 30 priority frames with GPU decode
     const priorityIndices: number[] = [];
     for (let i = 0; i < Math.min(30, FRAME_COUNT); i++) {
       priorityIndices.push(i);
@@ -112,12 +136,11 @@ export default function App() {
         img.onload = async () => {
           if (!isCancelled) {
             try {
-              // Pre-decode image asynchronously into GPU VRAM to eliminate scroll stutter
               if ('decode' in img) {
                 await img.decode();
               }
             } catch {
-              // Ignore decode errors if image already ready
+              // Ignore decode errors
             }
             imagesRef.current[index] = img;
             setLoadedCount((prev) => prev + 1);
@@ -133,13 +156,11 @@ export default function App() {
       });
     };
 
-    // Load priority batch first
     Promise.all(priorityIndices.map(loadAndDecodeImage)).then(() => {
       if (!isCancelled) {
         setIsInitialReady(true);
       }
 
-      // Stream remaining frames in background batches of 15
       const remainingIndices: number[] = [];
       for (let i = 30; i < FRAME_COUNT; i++) {
         remainingIndices.push(i);
@@ -159,12 +180,14 @@ export default function App() {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [isMobile]);
 
-  // 3. Fallback Window Scroll Listener (in case of non-Lenis scroll events)
+  // 3. Fallback Window Scroll Listener (desktop only)
   useEffect(() => {
+    if (isMobile) return;
+
     const handleScroll = () => {
-      if (lenisRef.current) return; // Lenis handles scroll if active
+      if (lenisRef.current) return;
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
 
@@ -176,10 +199,12 @@ export default function App() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMobile]);
 
-  // 4. Render Loop with Refresh-Rate Independent Delta-Time Lerp
+  // 4. Render Loop with Refresh-Rate Independent Delta-Time Lerp (desktop only)
   useEffect(() => {
+    if (isMobile) return; // Mobile uses static Ken Burns CSS background
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -209,7 +234,6 @@ export default function App() {
 
       let img = imagesRef.current[frameIndex];
 
-      // Fallback to nearest decoded image if current frame is loading
       if (!img || !img.complete || img.naturalWidth === 0) {
         for (let delta = 1; delta < FRAME_COUNT; delta++) {
           const prevIdx = frameIndex - delta;
@@ -233,7 +257,6 @@ export default function App() {
         const imgW = img.naturalWidth;
         const imgH = img.naturalHeight;
 
-        // Cover-fill scale calculation for crisp screen fitting
         const scale = Math.max(cw / imgW, ch / imgH);
         const drawW = imgW * scale;
         const drawH = imgH * scale;
@@ -249,10 +272,9 @@ export default function App() {
     let lastTime = performance.now();
 
     const render = (now: number) => {
-      const dt = Math.min(0.1, (now - lastTime) / 1000); // Delta time in seconds
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
       lastTime = now;
 
-      // Delta-time independent lerp dampening (smooth 60/120/144Hz support)
       const lerpSpeed = 14;
       const lerpFactor = 1 - Math.exp(-lerpSpeed * dt);
 
@@ -273,7 +295,7 @@ export default function App() {
         cancelAnimationFrame(animationFrameIdRef.current);
       }
     };
-  }, [isInitialReady]);
+  }, [isInitialReady, isMobile]);
 
   // Handlers for webpage modals and interactions
   const handleStartAdventure = () => {
@@ -353,8 +375,8 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-[#0a0f0b] text-slate-800 font-sans-body selection:bg-[#2e6343] selection:text-white overflow-x-hidden">
-      {/* 1. Preloading Progress Line */}
-      {loadProgress < 100 && (
+      {/* 1. Preloading Progress Line (desktop only) */}
+      {!isMobile && loadProgress < 100 && (
         <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-white/10">
           <div
             className="h-full bg-emerald-400 transition-all duration-150 ease-out shadow-[0_0_12px_#34d399]"
@@ -363,15 +385,25 @@ export default function App() {
         </div>
       )}
 
-      {/* 2. Fullscreen Background Scroll Video Canvas */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          className="block w-full h-full object-cover"
-        />
-        {/* Subtle dark gradient overlay to guarantee text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/70 pointer-events-none" />
-      </div>
+      {/* 2. Fullscreen Background — Canvas on desktop, Ken Burns static image on mobile */}
+      {isMobile ? (
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+          <img
+            src="/frames/frame_0001.png"
+            alt=""
+            className="mobile-hero-bg w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/70 pointer-events-none" />
+        </div>
+      ) : (
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <canvas
+            ref={canvasRef}
+            className="block w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/70 pointer-events-none" />
+        </div>
+      )}
 
       {/* 3. Foreground Webpage Content */}
       <div className="relative z-10 flex flex-col min-h-screen">

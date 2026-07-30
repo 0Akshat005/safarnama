@@ -48,10 +48,10 @@ export const DestinationModal: React.FC<DestinationModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in"
       onWheel={(e) => e.stopPropagation()}
     >
-      <div className="relative w-full max-w-3xl bg-[#0e1b12] text-white rounded-3xl shadow-2xl overflow-hidden my-4 max-h-[92vh] flex flex-col border border-white/20 overscroll-contain">
+      <div className="relative w-full sm:max-w-3xl bg-[#0e1b12] text-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden sm:my-4 max-h-[95vh] sm:max-h-[92vh] flex flex-col border border-white/20 overscroll-contain">
         
         {/* Top Image Gallery Header */}
         <div className="relative h-64 sm:h-80 w-full shrink-0 group">
@@ -107,20 +107,21 @@ export const DestinationModal: React.FC<DestinationModalProps> = ({
             )}
           </div>
 
-          {/* Dynamic Gallery Thumbnail Switcher Bar */}
+          {/* Dynamic Gallery Thumbnail Switcher Bar — 44px+ touch targets */}
           {images.length > 1 && (
             <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-md p-1.5 rounded-2xl border border-white/15">
               {images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`w-10 h-8 rounded-lg overflow-hidden border transition-all cursor-pointer ${
+                  className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-lg overflow-hidden border transition-all cursor-pointer ${
                     activeImageIndex === idx ? 'border-emerald-400 ring-2 ring-emerald-400/50 scale-105' : 'border-white/30 opacity-70 hover:opacity-100'
                   }`}
                 >
                   <img 
                     src={img} 
                     alt={`${destination.name} photo ${idx + 1}`} 
+                    loading="lazy"
                     className="w-full h-full object-cover" 
                     referrerPolicy="no-referrer"
                     onError={(e) => {
@@ -133,8 +134,8 @@ export const DestinationModal: React.FC<DestinationModalProps> = ({
           )}
         </div>
 
-        {/* Navigation Tabs Bar */}
-        <div className="flex items-center gap-2 px-6 py-3 bg-[#132519] border-b border-white/10 text-xs font-bold uppercase tracking-wider">
+        {/* Navigation Tabs Bar — overflow-x-auto for mobile */}
+        <div className="flex items-center gap-2 px-4 sm:px-6 py-3 bg-[#132519] border-b border-white/10 text-xs font-bold uppercase tracking-wider overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
@@ -284,7 +285,7 @@ export const DestinationModal: React.FC<DestinationModalProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onOpenBookingForDestination(destination.name)}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-full text-xs sm:text-sm shadow-xl flex items-center gap-2 transition-all cursor-pointer transform hover:-translate-y-0.5"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3.5 min-h-[52px] rounded-full text-sm shadow-xl flex items-center gap-2 transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto justify-center"
             >
               <Send className="w-4 h-4 -rotate-45" />
               <span>Book {destination.name} Escape</span>

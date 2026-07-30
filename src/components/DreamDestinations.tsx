@@ -8,6 +8,15 @@ interface DreamDestinationsProps {
 }
 
 export const DreamDestinations: React.FC<DreamDestinationsProps> = ({ onSelectDestination }) => {
+  const getDest = (id: string) => DESTINATIONS_DATA.find((d) => d.id === id)!;
+
+  const cappadocia = getDest('cappadocia');
+  const santorini = getDest('santorini');
+  const kyoto = getDest('kyoto');
+  const iceland = getDest('iceland');
+  const newYork = getDest('new-york');
+  const machuPicchu = getDest('machu-picchu');
+
   return (
     <section id="dream-destinations" className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* Adaptive Glassmorphic Container */}
@@ -27,170 +36,158 @@ export const DreamDestinations: React.FC<DreamDestinationsProps> = ({ onSelectDe
           </p>
         </div>
 
-        {/* Bento Grid layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 auto-rows-[200px] md:auto-rows-[190px]">
+        {/* Unified Bento Grid layout: Flex scroll on mobile (<md), Bento Grid on desktop (md+) */}
+        <div className="flex md:grid overflow-x-auto md:overflow-visible snap-x snap-mandatory scrollbar-none grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 auto-rows-[200px] md:auto-rows-[190px] -mx-2 px-2 md:mx-0 md:px-0 pb-2 md:pb-0">
           
           {/* 1. Cappadocia */}
-          {(() => {
-            const dest = DESTINATIONS_DATA.find((d) => d.id === 'cappadocia')!;
-            return (
-              <div
-                key={dest.id}
-                onClick={() => onSelectDestination(dest)}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:row-span-2 md:col-span-1 h-[320px] md:h-auto"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                  <h3 className="font-script text-3xl sm:text-4xl font-bold drop-shadow">{dest.name}</h3>
-                  <div className="flex items-center gap-1.5 text-xs sm:text-sm text-emerald-300 mt-0.5">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span>{dest.country}</span>
-                  </div>
+          {cappadocia && (
+            <div
+              key={cappadocia.id}
+              onClick={() => onSelectDestination(cappadocia)}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:row-span-2 md:col-span-1 h-[320px] md:h-auto w-[260px] md:w-auto shrink-0 md:shrink snap-start"
+            >
+              <img
+                src={cappadocia.image}
+                alt={cappadocia.name}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                <h3 className="font-script text-3xl sm:text-4xl font-bold drop-shadow">{cappadocia.name}</h3>
+                <div className="flex items-center gap-1.5 text-xs sm:text-sm text-emerald-300 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>{cappadocia.country}</span>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          )}
 
           {/* 2. Santorini */}
-          {(() => {
-            const dest = DESTINATIONS_DATA.find((d) => d.id === 'santorini')!;
-            return (
-              <div
-                key={dest.id}
-                onClick={() => onSelectDestination(dest)}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                  <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{dest.name}</h3>
-                  <div className="flex items-center gap-1 text-xs text-emerald-300">
-                    <MapPin className="w-3 h-3" />
-                    <span>{dest.country}</span>
-                  </div>
+          {santorini && (
+            <div
+              key={santorini.id}
+              onClick={() => onSelectDestination(santorini)}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto w-[240px] md:w-auto shrink-0 md:shrink snap-start"
+            >
+              <img
+                src={santorini.image}
+                alt={santorini.name}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{santorini.name}</h3>
+                <div className="flex items-center gap-1 text-xs text-emerald-300">
+                  <MapPin className="w-3 h-3" />
+                  <span>{santorini.country}</span>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          )}
 
           {/* 3. Kyoto */}
-          {(() => {
-            const dest = DESTINATIONS_DATA.find((d) => d.id === 'kyoto')!;
-            return (
-              <div
-                key={dest.id}
-                onClick={() => onSelectDestination(dest)}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                  <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{dest.name}</h3>
-                  <div className="flex items-center gap-1 text-xs text-emerald-300">
-                    <MapPin className="w-3 h-3" />
-                    <span>{dest.country}</span>
-                  </div>
+          {kyoto && (
+            <div
+              key={kyoto.id}
+              onClick={() => onSelectDestination(kyoto)}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto w-[240px] md:w-auto shrink-0 md:shrink snap-start"
+            >
+              <img
+                src={kyoto.image}
+                alt={kyoto.name}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{kyoto.name}</h3>
+                <div className="flex items-center gap-1 text-xs text-emerald-300">
+                  <MapPin className="w-3 h-3" />
+                  <span>{kyoto.country}</span>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          )}
 
-          {/* 6. Iceland */}
-          {(() => {
-            const dest = DESTINATIONS_DATA.find((d) => d.id === 'iceland')!;
-            return (
-              <div
-                key={dest.id}
-                onClick={() => onSelectDestination(dest)}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:row-span-2 md:col-span-1 h-[320px] md:h-auto"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                  <h3 className="font-script text-3xl sm:text-4xl font-bold drop-shadow">{dest.name}</h3>
-                  <div className="flex items-center gap-1.5 text-xs sm:text-sm text-emerald-300 mt-0.5">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span>{dest.country}</span>
-                  </div>
+          {/* 4. Iceland */}
+          {iceland && (
+            <div
+              key={iceland.id}
+              onClick={() => onSelectDestination(iceland)}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:row-span-2 md:col-span-1 h-[320px] md:h-auto w-[260px] md:w-auto shrink-0 md:shrink snap-start"
+            >
+              <img
+                src={iceland.image}
+                alt={iceland.name}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                <h3 className="font-script text-3xl sm:text-4xl font-bold drop-shadow">{iceland.name}</h3>
+                <div className="flex items-center gap-1.5 text-xs sm:text-sm text-emerald-300 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>{iceland.country}</span>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          )}
 
-          {/* 4. New York */}
-          {(() => {
-            const dest = DESTINATIONS_DATA.find((d) => d.id === 'new-york')!;
-            return (
-              <div
-                key={dest.id}
-                onClick={() => onSelectDestination(dest)}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                  <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{dest.name}</h3>
-                  <div className="flex items-center gap-1 text-xs text-emerald-300">
-                    <MapPin className="w-3 h-3" />
-                    <span>{dest.country}</span>
-                  </div>
+          {/* 5. New York */}
+          {newYork && (
+            <div
+              key={newYork.id}
+              onClick={() => onSelectDestination(newYork)}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto w-[240px] md:w-auto shrink-0 md:shrink snap-start"
+            >
+              <img
+                src={newYork.image}
+                alt={newYork.name}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{newYork.name}</h3>
+                <div className="flex items-center gap-1 text-xs text-emerald-300">
+                  <MapPin className="w-3 h-3" />
+                  <span>{newYork.country}</span>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          )}
 
-          {/* 5. Machu Picchu */}
-          {(() => {
-            const dest = DESTINATIONS_DATA.find((d) => d.id === 'machu-picchu')!;
-            return (
-              <div
-                key={dest.id}
-                onClick={() => onSelectDestination(dest)}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto"
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                  <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{dest.name}</h3>
-                  <div className="flex items-center gap-1 text-xs text-emerald-300">
-                    <MapPin className="w-3 h-3" />
-                    <span>{dest.country}</span>
-                  </div>
+          {/* 6. Machu Picchu */}
+          {machuPicchu && (
+            <div
+              key={machuPicchu.id}
+              onClick={() => onSelectDestination(machuPicchu)}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:col-span-1 h-[200px] md:h-auto w-[240px] md:w-auto shrink-0 md:shrink snap-start"
+            >
+              <img
+                src={machuPicchu.image}
+                alt={machuPicchu.name}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                <h3 className="font-script text-2xl sm:text-3xl font-bold drop-shadow">{machuPicchu.name}</h3>
+                <div className="flex items-center gap-1 text-xs text-emerald-300">
+                  <MapPin className="w-3 h-3" />
+                  <span>{machuPicchu.country}</span>
                 </div>
               </div>
-            );
-          })()}
+            </div>
+          )}
 
         </div>
 

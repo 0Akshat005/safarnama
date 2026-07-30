@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Globe, Compass } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Compass } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
@@ -8,7 +8,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenPlanner }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -16,6 +16,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenP
     { id: 'escapes', label: 'Weekend Escapes' },
     { id: 'family', label: 'Family Trips' },
   ];
+
+  // Body scroll lock when drawer is open (spec requirement)
+  useEffect(() => {
+    if (drawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [drawerOpen]);
 
   const handleNavClick = (id: string) => {
     setActiveTab(id);
@@ -31,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenP
   };
 
   return (
-    <header className="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-2 relative z-30">
+    <header className="w-full max-w-7xl mx-auto px-6 pt-4 pb-2 relative z-30">
       <nav className="flex items-center justify-between py-3">
         {/* Logo */}
         <div 
@@ -83,15 +95,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenP
           })}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button — min 44×44 per spec */}
         <div className="md:hidden flex items-center">
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-slate-200 hover:text-white focus:outline-none"
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            className="p-2.5 min-w-[44px] min-h-[44px] text-slate-200 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-xl flex items-center justify-center active:scale-95 transition-transform"
             aria-label="Toggle Menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
+              {drawerOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -101,36 +113,65 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenP
         </div>
       </nav>
 
-      {/* Mobile Menu dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-2 p-4 bg-[#142319]/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 flex flex-col space-y-3 z-50">
+      {/* Mobile Drawer Overlay */}
+      {drawerOpen && (
+        <div
+          className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm drawer-overlay ${drawerOpen ? 'open' : ''}`}
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
+
+      {/* Mobile Slide-in Drawer Panel */}
+      <div
+        className={`fixed top-0 right-0 bottom-0 z-50 w-[280px] max-w-[85vw] bg-[#0e1b12]/98 backdrop-blur-xl border-l border-white/10 shadow-2xl flex flex-col drawer-panel ${drawerOpen ? 'open' : ''} md:hidden`}
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between p-5 border-b border-white/10">
+          <span className="font-serif-title text-lg font-bold text-white">Menu</span>
+          <button
+            onClick={() => setDrawerOpen(false)}
+            className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors active:scale-95"
+            aria-label="Close Menu"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Drawer Nav Items */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-2">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => {
                 handleNavClick(item.id);
-                setMobileMenuOpen(false);
+                setDrawerOpen(false);
               }}
-              className={`text-left py-2 px-3 rounded-lg text-sm font-medium ${
+              className={`w-full text-left py-3.5 px-4 rounded-xl text-base font-medium min-h-[52px] flex items-center transition-all active:scale-[0.98] ${
                 activeTab === item.id
-                  ? 'bg-[#2d5a3f] text-white'
+                  ? 'bg-[#2d5a3f] text-white shadow-lg'
                   : 'text-slate-200 hover:bg-white/10'
               }`}
             >
               {item.label}
             </button>
           ))}
+        </div>
+
+        {/* Drawer CTA */}
+        <div className="p-5 border-t border-white/10">
           <button
             onClick={() => {
-              setMobileMenuOpen(false);
+              setDrawerOpen(false);
               onOpenPlanner();
             }}
-            className="w-full mt-2 py-2.5 px-4 bg-[#2d5a3f] hover:bg-[#386d4d] text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 min-h-[52px] bg-[#2d5a3f] hover:bg-[#386d4d] text-white rounded-xl text-base font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg"
           >
-            <Compass className="w-4 h-4" /> Start Your Adventure
+            <Compass className="w-5 h-5" /> Start Your Adventure
           </button>
         </div>
-      )}
+      </div>
     </header>
   );
 };

@@ -10,9 +10,87 @@
   .font-sans-body {
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
+
+  /* ── Horizontal snap-scroll container ── */
+  .snap-scroll-x {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 16px;
+    padding-bottom: 4px;
+  }
+
+  .snap-scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+
+  .snap-scroll-x > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
 }
 
 body {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Ken Burns cinematic background for mobile ── */
+@keyframes kenBurns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    transform: scale(1.08) translate(-1%, -1%);
+  }
+  50% {
+    transform: scale(1.12) translate(1%, -2%);
+  }
+  75% {
+    transform: scale(1.06) translate(-0.5%, 1%);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+.mobile-hero-bg {
+  animation: kenBurns 25s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Mobile backdrop-blur reduction ── */
+@media (max-width: 767px) {
+  .backdrop-blur-2xl {
+    --tw-backdrop-blur: blur(12px) !important;
+  }
+}
+
+/* ── Mobile nav drawer animation ── */
+.drawer-overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.drawer-overlay.open {
+  opacity: 1;
+}
+
+.drawer-panel {
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.drawer-panel.open {
+  transform: translateX(0);
+}
+
+/* ── Fade-in for modals ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
